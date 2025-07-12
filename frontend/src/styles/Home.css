@@ -1,0 +1,18 @@
+.home {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .home-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
