@@ -8,7 +8,7 @@ API_TOKEN = "SAC2CQC-D9R47H7-HN0FKJV-WMXSTMG"
 upload_url = "http://localhost:3001/api/v1/document/upload"
 chat_url = "http://localhost:3001/api/v1/workspace/haqathon/chat"
 
-file_path = os.path.join(os.path.dirname(__file__), "everything.wav")
+file_path = os.path.join(os.path.dirname(__file__), "cache", "recording.wav")
 
 def speak(text):
     engine = pyttsx3.init()
