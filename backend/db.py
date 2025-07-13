@@ -15,11 +15,12 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             age INTEGER,
-            medical_notes TEXT,
+            dementia_stage TEXT,
             caretaker_name TEXT NOT NULL,
             caretaker_relationship TEXT NOT NULL,
             caretaker_number TEXT NOT NULL,
             caretaker_email TEXT NOT NULL,
+            doctor_name TEXT NOT NULL,
             doctor_email TEXT NOT NULL
         )
     """)

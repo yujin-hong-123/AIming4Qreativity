@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/Home.css"; // Optional: create this if you want to style buttons
+import "../styles/Home.css";
 
 function Home() {
   const [msg, setMsg] = useState("");

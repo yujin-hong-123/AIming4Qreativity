@@ -1,6 +1,6 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
-from db import init_db
+from db import init_db, get_db_connection
 
 app = Flask(__name__)
 CORS(app)  # Allow requests from React frontend
@@ -19,12 +19,119 @@ def reminder():
 
 @app.route("/calendar")
 def calendar():
-    return jsonify(message="calendar")
+    return jsonify(message="Calendar")
 
 @app.route("/emergency")
 def emergency():
-    return jsonify(message="emergency")
+    return jsonify(message="Emergency")
+
+@app.route("/api/users", methods=["POST"])
+def upsert_user():
+    data = request.get_json()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Check if a user already exists
+    cursor.execute("SELECT id FROM users LIMIT 1")
+    existing_user = cursor.fetchone()
+
+    if existing_user:
+        # Update existing user
+        cursor.execute("""
+            UPDATE users SET
+                name = ?, age = ?, dementia_stage = ?,
+                caretaker_name = ?, caretaker_relationship = ?, caretaker_number = ?,
+                caretaker_email = ?, doctor_name = ?, doctor_email = ?
+            WHERE id = ?
+        """, (
+            data["name"],
+            data["age"],
+            data["dementia_stage"],
+            data["caretaker_name"],
+            data["caretaker_relationship"],
+            data["caretaker_number"],
+            data["caretaker_email"],
+            data["doctor_name"],
+            data["doctor_email"],
+            existing_user["id"]
+        ))
+    else:
+        # Insert new user
+        cursor.execute("""
+            INSERT INTO users (
+                name, age, dementia_stage,
+                caretaker_name, caretaker_relationship, caretaker_number,
+                caretaker_email, doctor_name, doctor_email
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            data["name"],
+            data["age"],
+            data["dementia_stage"],
+            data["caretaker_name"],
+            data["caretaker_relationship"],
+            data["caretaker_number"],
+            data["caretaker_email"],
+            data["doctor_name"],
+            data["doctor_email"]
+        ))
+
+    conn.commit()
+    conn.close()
+    return {"message": "User profile saved"}, 200
+
+@app.route("/api/users", methods=["GET"])
+def get_user():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users LIMIT 1")
+    user = cursor.fetchone()
+    conn.close()
+
+    if user:
+        return dict(user), 200
+    else:
+        return {"message": "No user found"}, 404
+
+
+@app.route("/api/reminders", methods=["POST"])
+def add_reminder():
+    data = request.get_json()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Assume only one user exists, get user_id
+    cursor.execute("SELECT id FROM users LIMIT 1")
+    user = cursor.fetchone()
+
+    if not user:
+        conn.close()
+        return {"message": "No user exists"}, 400
+
+    cursor.execute("""
+        INSERT INTO reminders (user_id, time, label, repeat_daily)
+        VALUES (?, ?, ?, ?)
+    """, (
+        user["id"],
+        data["time"],
+        data["label"],
+        data.get("repeat_daily", True)
+    ))
+
+    conn.commit()
+    conn.close()
+    return {"message": "Reminder saved"}, 201
+
+@app.route("/api/reminders", methods=["GET"])
+def get_reminders():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM reminders")
+    reminders = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return jsonify(reminders)
+
 
 if __name__ == "__main__":
     init_db()
     app.run(debug=True, port=5000)
+

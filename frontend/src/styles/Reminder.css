@@ -1,0 +1,28 @@
+/* Reminder.css */
+.reminder-page {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  form input, form label, button {
+    display: block;
+    margin-bottom: 10px;
+    width: 100%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  li {
+    padding: 6px 0;
+    border-bottom: 1px solid #ddd;
+  }
+  
