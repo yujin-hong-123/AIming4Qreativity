@@ -47,9 +47,14 @@ function Reminder() {
       <form onSubmit={handleSubmit}>
         <input type="time" name="time" value={form.time} onChange={handleChange} required />
         <input type="text" name="label" placeholder="Reminder Label" value={form.label} onChange={handleChange} required />
-        <label>
-          <input type="checkbox" name="repeat_daily" checked={form.repeat_daily} onChange={handleChange} />
-          Repeat Daily
+        <label className="checkbox-label">
+          <span>Repeat&nbsp;Daily</span>
+          <input
+            type="checkbox"
+            name="repeat_daily"
+            checked={form.repeat_daily}
+            onChange={handleChange}
+          />
         </label>
         <button type="submit">Add Reminder</button>
       </form>
