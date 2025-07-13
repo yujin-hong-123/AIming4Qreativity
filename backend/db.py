@@ -25,18 +25,6 @@ def init_db():
         )
     """)
 
-    # Calendar events
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS events (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            title TEXT NOT NULL,
-            date TEXT NOT NULL,
-            description TEXT,
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        )
-    """)
-
     # Daily reminders / alarms
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS reminders (
@@ -44,8 +32,26 @@ def init_db():
             user_id INTEGER,
             time TEXT NOT NULL,
             label TEXT NOT NULL,
-            repeat_daily BOOLEAN NOT NULL DEFAULT 1,
             FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    """)
+    
+    # Calendar events
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            title TEXT NOT NULL,
+            date TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    """)
+    
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT NOT NULL,
+            description TEXT NOT NULL
         )
     """)
 

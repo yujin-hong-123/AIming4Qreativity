@@ -20,7 +20,7 @@ function Home() {
         <button onClick={() => navigate("/profile")}>Profile</button>
         <button onClick={() => navigate("/reminder")}>Reminder</button>
         <button onClick={() => navigate("/calendar")}>Calendar</button>
-        <button onClick={() => navigate("/emergency")}>Emergency</button>
+        <button onClick={() => navigate("/log")}>Log</button>
       </div>
     </div>
   );
