@@ -1,5 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+import subprocess
+import os
 from db import init_db, get_db_connection
 
 app = Flask(__name__)
@@ -129,6 +131,29 @@ def get_reminders():
     reminders = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return jsonify(reminders)
+
+@app.route("/run-audio-llm", methods=["POST"])
+def run_audio_llm():
+    try:
+        # Assuming run-audio-llm.py is in the same directory as this Flask app
+        script_path = os.path.join(os.path.dirname(__file__), "run-audio-llm.py")
+        print(f"Running script: {script_path}")
+
+        # Run the script using subprocess and capture both stdout and stderr
+        result = subprocess.run(["python", script_path], capture_output=True, text=True)
+        
+        # Print outputs to the console for debugging
+        print(f"stdout: {result.stdout}")
+        print(f"stderr: {result.stderr}")
+
+        if result.returncode == 0:
+            return jsonify({"message": "Script executed successfully", "output": result.stdout}), 200
+        else:
+            return jsonify({"message": "Script failed", "error": result.stderr}), 500
+    except Exception as e:
+        print(f"Error occurred: {str(e)}")
+        return jsonify({"message": "Error occurred", "error": str(e)}), 500
+
 
 
 if __name__ == "__main__":
