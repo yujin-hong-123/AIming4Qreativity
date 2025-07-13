@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
 import subprocess
 import os
 from db import init_db, get_db_connection
@@ -221,6 +222,26 @@ def get_logs():
 
     conn.close()
     return jsonify(logs)
+
+@app.route("/api/upload-audio", methods=["POST"])
+def upload_audio():
+    if "audio" not in request.files:
+        return jsonify({"error": "No audio file uploaded"}), 400
+
+    file = request.files["audio"]
+    filename = secure_filename(file.filename)
+
+    cache_dir = os.path.join(os.path.dirname(__file__), "cache")
+    os.makedirs(cache_dir, exist_ok=True)  # Ensure 'cache/' exists
+
+    filepath = os.path.join(cache_dir, filename)
+    file.save(filepath)
+
+    print(f"Saved audio to: {filepath}")
+    
+    # ✅ This was missing!
+    return jsonify({"message": "Audio file received", "path": filepath}), 200
+
 
 if __name__ == "__main__":
     init_db()
