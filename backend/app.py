@@ -25,6 +25,10 @@ def calendar():
 def log():
     return jsonify(message="Log")
 
+@app.route("/start")
+def start():
+    return jsonify(message="Start")
+
 @app.route("/api/users", methods=["POST"])
 def upsert_user():
     data = request.get_json()
