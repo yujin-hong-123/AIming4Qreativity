@@ -51,7 +51,24 @@ function Start() {
 
     detectSilence(() => {
       stopRecording();
-    }, 2500, 0.07);
+    }, 2000, 0.07);
+  };
+
+  const handleChatClick = () => {
+    // Make a POST request to the Flask endpoint to run the script
+    fetch("http://127.0.0.1:5000/run-audio-llm", {
+      method: "POST",
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log("Script output:", data);
+        // Navigate to the chat page after the script runs
+        navigate("/chat");
+      })
+      .catch(err => {
+        console.error("Error running the script:", err);
+        alert("There was an error triggering the chat functionality.");
+      });
   };
 
   const stopRecording = async () => {
@@ -164,6 +181,8 @@ function Start() {
       <button className="start-button" onClick={() => navigate("/home")}>
         Hello
       </button>
+      <button onClick={handleChatClick}>Chat</button>
+
     </div>
   );
 }
