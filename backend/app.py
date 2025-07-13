@@ -168,7 +168,6 @@ def run_audio_llm():
         return jsonify({"message": "Error occurred", "error": str(e)}), 500
 
 
-=======
 @app.route("/api/events", methods=["POST"])
 def add_event():
     data = request.get_json()
