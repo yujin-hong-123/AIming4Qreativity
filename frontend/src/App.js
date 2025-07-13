@@ -6,17 +6,19 @@ import Profile from "./components/Profile";
 import Reminder from "./components/Reminder";
 import Calendar from "./components/Calendar";
 import Log from "./components/Log";
+import Start from "./components/Start";
 
 function App() {
   return (
     <Router>
         <Routes>
+          <Route path="/start" element={<Start />} />
           <Route path="/home" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/reminder" element={<Reminder />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/log" element={<Log />} />
-          <Route path="*" element={<Navigate replace to="/home" />} />
+          <Route path="*" element={<Navigate replace to="/start" />} />
         </Routes>
     </Router>
   );
