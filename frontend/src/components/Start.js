@@ -56,25 +56,43 @@ function Start() {
 
   const stopRecording = async () => {
     const { blob } = await recorderRef.current.stop();
-
-    // Download the real .wav file
+  
+    // ✅ 1. Download locally
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = "recording.wav";
     a.click();
-
+  
+    // ✅ 2. Upload to backend
+    const formData = new FormData();
+    formData.append("audio", blob, "recording.wav");
+  
+    try {
+      const response = await fetch("http://127.0.0.1:5000/api/upload-audio", {
+        method: "POST",
+        body: formData,
+      });
+  
+      const result = await response.json();
+      console.log("Upload response:", result);
+    } catch (err) {
+      console.error("Upload error:", err);
+    }
+  
     setRecording(false);
     setStatus("Finished recording");
     stopAll();
-
-    // Restart passive listening
+  
+    // ✅ 3. Restart listening
     setTimeout(() => {
       setStatus("Waiting for speech...");
       listeningRef.current = true;
       initMicAndDetectSpeech();
     }, 1000);
   };
+  
+  
 
   const stopAll = () => {
     silenceTimerRef.current && clearTimeout(silenceTimerRef.current);
