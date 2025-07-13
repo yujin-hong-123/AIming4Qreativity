@@ -1,82 +1,102 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Start.css";
 
 function Start() {
   const navigate = useNavigate();
   const [recording, setRecording] = useState(false);
+  const [status, setStatus] = useState("Waiting for speech...");
+
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const silenceTimerRef = useRef(null);
   const audioContextRef = useRef(null);
   const analyserRef = useRef(null);
   const sourceRef = useRef(null);
+  const streamRef = useRef(null);
+  const listeningRef = useRef(true);
 
-  const handleStartClick = () => {
-    navigate("/home");
-  };
+  useEffect(() => {
+    // Start mic immediately and wait for speech
+    initMicAndDetectSpeech();
+    return () => {
+      stopAll(); // Cleanup
+    };
+  }, []);
 
-  const startRecording = async () => {
+  const initMicAndDetectSpeech = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      audioChunksRef.current = [];
-  
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-  
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) {
-          audioChunksRef.current.push(e.data);
-        }
-      };
-  
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(audioChunksRef.current, { type: "audio/wav" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "recording.wav";
-        a.click();
-      };
-  
-      mediaRecorder.start();
-      setRecording(true);
-  
-      // Setup audio context for silence detection
+      streamRef.current = stream;
+
       audioContextRef.current = new AudioContext();
       analyserRef.current = audioContextRef.current.createAnalyser();
       analyserRef.current.fftSize = 512;
+
       sourceRef.current = audioContextRef.current.createMediaStreamSource(stream);
       sourceRef.current.connect(analyserRef.current);
-  
-      detectSilence(() => {
-        stopRecording();
-      }, 2000, 0.03); // 2s of silence at < 0.02 RMS
+
+      // Listen for speech
+      detectSpeech(() => {
+        startRecording();
+      }, 0.03); // threshold = 0.03
     } catch (err) {
       console.error("Microphone access error:", err);
     }
+  };
+
+  const startRecording = () => {
+    if (!streamRef.current) return;
+
+    audioChunksRef.current = [];
+    const mediaRecorder = new MediaRecorder(streamRef.current);
+    mediaRecorderRef.current = mediaRecorder;
+
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) audioChunksRef.current.push(e.data);
+    };
+
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(audioChunksRef.current, { type: "audio/wav" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "recording.wav";
+      a.click();
+    };
+
+    mediaRecorder.start();
+    setRecording(true);
+    setStatus("Recording...");
+
+    detectSilence(() => {
+      stopRecording();
+    }, 2500, 0.06); // stop if 2 seconds of silence
+
   };
 
   const stopRecording = () => {
     if (mediaRecorderRef.current?.state === "recording") {
       mediaRecorderRef.current.stop();
     }
-
     setRecording(false);
+    setStatus("Finished recording");
+    stopAll();
+  };
 
-    // Cleanup audio context
+  const stopAll = () => {
     silenceTimerRef.current && clearTimeout(silenceTimerRef.current);
     if (audioContextRef.current) {
       audioContextRef.current.close();
       audioContextRef.current = null;
     }
+    streamRef.current?.getTracks().forEach((t) => t.stop());
   };
 
-  const detectSilence = (onSilence, timeout = 2000, threshold = 0.02) => {
+  const detectSpeech = (onSpeech, threshold = 0.06) => {
     const analyser = analyserRef.current;
     const data = new Uint8Array(analyser.fftSize);
-  
-    analyser.fftSize = 512; // smaller = faster detection
+
     const check = () => {
       analyser.getByteTimeDomainData(data);
       let sumSquares = 0;
@@ -85,8 +105,31 @@ function Start() {
         sumSquares += normalized * normalized;
       }
       const rms = Math.sqrt(sumSquares / data.length);
-      // console.log("Volume RMS:", rms.toFixed(4));
-  
+
+      if (rms > threshold && listeningRef.current) {
+        listeningRef.current = false;
+        onSpeech();
+        return;
+      }
+      requestAnimationFrame(check);
+    };
+
+    check();
+  };
+
+  const detectSilence = (onSilence, timeout = 2000, threshold = 0.03) => {
+    const analyser = analyserRef.current;
+    const data = new Uint8Array(analyser.fftSize);
+
+    const check = () => {
+      analyser.getByteTimeDomainData(data);
+      let sumSquares = 0;
+      for (let i = 0; i < data.length; i++) {
+        const normalized = (data[i] - 128) / 128;
+        sumSquares += normalized * normalized;
+      }
+      const rms = Math.sqrt(sumSquares / data.length);
+
       if (rms < threshold) {
         if (!silenceTimerRef.current) {
           silenceTimerRef.current = setTimeout(() => {
@@ -98,31 +141,21 @@ function Start() {
         clearTimeout(silenceTimerRef.current);
         silenceTimerRef.current = null;
       }
-  
-      if (recording) {
-        requestAnimationFrame(check);
-      }
-    };
-  
-    check();
-  };
 
-  const handleMicClick = () => {
-    recording ? stopRecording() : startRecording();
+      if (recording) requestAnimationFrame(check);
+    };
+
+    check();
   };
 
   return (
     <div className="start-page">
-      <button className="start-button" onClick={handleStartClick}>
+      <div className="status">{status}</div>
+      <button className="start-button" onClick={() => navigate("/home")}>
         Hello
-      </button>
-
-      <button className="mic-button" onClick={handleMicClick}>
-        {recording ? "Stop Mic" : "🎤"}
       </button>
     </div>
   );
 }
 
 export default Start;
-
