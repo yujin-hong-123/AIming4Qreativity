@@ -34,7 +34,6 @@ function Home() {
     <div className="home">
       <h2>{msg || "Loading..."}</h2>
       <div className="home-buttons">
-        <button onClick={handleChatClick}>Chat</button>
         <button onClick={() => navigate("/profile")}>Profile</button>
         <button onClick={() => navigate("/reminder")}>Reminder</button>
         <button onClick={() => navigate("/calendar")}>Calendar</button>

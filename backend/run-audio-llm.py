@@ -25,7 +25,7 @@ def upload_audio_file(file_path, url):
     }
 
     files = {
-        "file": ("everything.wav", open(file_path, "rb"), "audio/wav")
+        "file": ("recording.wav", open(file_path, "rb"), "audio/wav")
     }
 
     try:
