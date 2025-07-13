@@ -71,7 +71,7 @@ function Start() {
 
     detectSilence(() => {
       stopRecording();
-    }, 2500, 0.06); // stop if 2 seconds of silence
+    }, 2500, 0.07); // stop if 2 seconds of silence
 
   };
 
@@ -79,10 +79,20 @@ function Start() {
     if (mediaRecorderRef.current?.state === "recording") {
       mediaRecorderRef.current.stop();
     }
+  
     setRecording(false);
     setStatus("Finished recording");
+  
     stopAll();
+  
+    // Wait briefly, then restart listening
+    setTimeout(() => {
+      setStatus("Waiting for speech...");
+      listeningRef.current = true;
+      initMicAndDetectSpeech(); // 🔁 Restart passive listening
+    }, 1000);
   };
+  
 
   const stopAll = () => {
     silenceTimerRef.current && clearTimeout(silenceTimerRef.current);
