@@ -9,6 +9,8 @@ EXPORT_CHAT_URL=f"{BASE_URL}/v1/system/export-chats"
 chat_url = f"{BASE_URL}/v1/workspace/haq/chat"
 HEADERS = {'Authorization': f'Bearer {API_TOKEN}'}
 
+CL = 1024
+
 def list_workspaces():
 
     url = f"{BASE_URL}/workspaces"
@@ -141,7 +143,7 @@ if __name__ == "__main__":
 
     print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
-    response = send_chat_request(chat_url, s[:2048], "chat")
+    response = send_chat_request(chat_url, s[:CL], "chat")
     print_resp(response)
 
 
