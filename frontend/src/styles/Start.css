@@ -1,28 +1,29 @@
 .start-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    position: relative;
-  }
-  
-  .start-button {
-    font-size: 2rem;
-    padding: 20px 40px;
-    margin-bottom: 60px;
-  }
-  
-  .mic-button {
-    position: absolute;
-    bottom: 30px;
-    font-size: 2rem;
-    background-color: #ffd3d3;
-    border: none;
-    border-radius: 50%;
-    padding: 20px;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  position: relative;
+}
+
+.start-button {
+  font-size: 2rem;
+  padding: 20px 40px;
+  margin-bottom: 60px;
+}
+
+.mic-button {
+  position: absolute;
+  bottom: 30px;
+  font-size: 2rem;
+  background-color: #ffd3d3;
+  border: none;
+  border-radius: 50%;
+  padding: 20px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+}
+
 
   
