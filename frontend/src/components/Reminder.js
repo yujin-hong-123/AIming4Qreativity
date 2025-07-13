@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/Reminder.css";
 
 function Reminder() {
-  const [form, setForm] = useState({ time: "", label: "", repeat_daily: true });
+  const [form, setForm] = useState({ time: "", label: ""});
   const [reminders, setReminders] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("http://127.0.0.1:5000/api/reminders")
@@ -30,7 +32,7 @@ function Reminder() {
       });
       if (res.ok) {
         alert("Reminder saved!");
-        setForm({ time: "", label: "", repeat_daily: true });
+        setForm({ time: "", label: ""});
         const newReminders = await fetch("http://127.0.0.1:5000/api/reminders").then(r => r.json());
         setReminders(newReminders);
       } else {
@@ -41,16 +43,17 @@ function Reminder() {
     }
   };
 
+  const handleClose = () => {
+    navigate(-1); // Go back to the previous page
+  };
+
   return (
     <div className="reminder-page">
+      <button className="close-button" onClick={handleClose}>&times;</button>
       <h2>Create Reminder</h2>
       <form onSubmit={handleSubmit}>
         <input type="time" name="time" value={form.time} onChange={handleChange} required />
         <input type="text" name="label" placeholder="Reminder Label" value={form.label} onChange={handleChange} required />
-        <label>
-          <input type="checkbox" name="repeat_daily" checked={form.repeat_daily} onChange={handleChange} />
-          Repeat Daily
-        </label>
         <button type="submit">Add Reminder</button>
       </form>
 
@@ -58,7 +61,7 @@ function Reminder() {
       <ul>
         {reminders.map((r) => (
           <li key={r.id}>
-            {r.time} — {r.label} {r.repeat_daily ? "(Daily)" : ""}
+            {r.time} — {r.label}
           </li>
         ))}
       </ul>

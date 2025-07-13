@@ -5,18 +5,20 @@ import Home from "./components/Home";
 import Profile from "./components/Profile";
 import Reminder from "./components/Reminder";
 import Calendar from "./components/Calendar";
-import Emergency from "./components/Emergency";
+import Log from "./components/Log";
+import Start from "./components/Start";
 
 function App() {
   return (
     <Router>
         <Routes>
+          <Route path="/start" element={<Start />} />
           <Route path="/home" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/reminder" element={<Reminder />} />
           <Route path="/calendar" element={<Calendar />} />
-          <Route path="/emergency" element={<Emergency />} />
-          <Route path="*" element={<Navigate replace to="/home" />} />
+          <Route path="/log" element={<Log />} />
+          <Route path="*" element={<Navigate replace to="/start" />} />
         </Routes>
     </Router>
   );
