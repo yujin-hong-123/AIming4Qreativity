@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Recorder from "recorder-js";
 import "../styles/Start.css";
 
 function Start() {
@@ -7,21 +8,17 @@ function Start() {
   const [recording, setRecording] = useState(false);
   const [status, setStatus] = useState("Waiting for speech...");
 
-  const mediaRecorderRef = useRef(null);
-  const audioChunksRef = useRef([]);
-  const silenceTimerRef = useRef(null);
+  const recorderRef = useRef(null);
   const audioContextRef = useRef(null);
+  const silenceTimerRef = useRef(null);
   const analyserRef = useRef(null);
   const sourceRef = useRef(null);
   const streamRef = useRef(null);
   const listeningRef = useRef(true);
 
   useEffect(() => {
-    // Start mic immediately and wait for speech
     initMicAndDetectSpeech();
-    return () => {
-      stopAll(); // Cleanup
-    };
+    return () => stopAll();
   }, []);
 
   const initMicAndDetectSpeech = async () => {
@@ -29,70 +26,55 @@ function Start() {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
 
-      audioContextRef.current = new AudioContext();
+      audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      recorderRef.current = new Recorder(audioContextRef.current);
+      await recorderRef.current.init(stream);
+
       analyserRef.current = audioContextRef.current.createAnalyser();
       analyserRef.current.fftSize = 512;
 
       sourceRef.current = audioContextRef.current.createMediaStreamSource(stream);
       sourceRef.current.connect(analyserRef.current);
 
-      // Listen for speech
       detectSpeech(() => {
         startRecording();
-      }, 0.03); // threshold = 0.03
+      }, 0.03);
     } catch (err) {
       console.error("Microphone access error:", err);
     }
   };
 
   const startRecording = () => {
-    if (!streamRef.current) return;
-
-    audioChunksRef.current = [];
-    const mediaRecorder = new MediaRecorder(streamRef.current);
-    mediaRecorderRef.current = mediaRecorder;
-
-    mediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) audioChunksRef.current.push(e.data);
-    };
-
-    mediaRecorder.onstop = () => {
-      const blob = new Blob(audioChunksRef.current, { type: "audio/wav" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "recording.wav";
-      a.click();
-    };
-
-    mediaRecorder.start();
+    recorderRef.current.start();
     setRecording(true);
     setStatus("Recording...");
 
     detectSilence(() => {
       stopRecording();
-    }, 2500, 0.07); // stop if 2 seconds of silence
-
+    }, 2500, 0.07);
   };
 
-  const stopRecording = () => {
-    if (mediaRecorderRef.current?.state === "recording") {
-      mediaRecorderRef.current.stop();
-    }
-  
+  const stopRecording = async () => {
+    const { blob } = await recorderRef.current.stop();
+
+    // Download the real .wav file
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "recording.wav";
+    a.click();
+
     setRecording(false);
     setStatus("Finished recording");
-  
     stopAll();
-  
-    // Wait briefly, then restart listening
+
+    // Restart passive listening
     setTimeout(() => {
       setStatus("Waiting for speech...");
       listeningRef.current = true;
-      initMicAndDetectSpeech(); // 🔁 Restart passive listening
+      initMicAndDetectSpeech();
     }, 1000);
   };
-  
 
   const stopAll = () => {
     silenceTimerRef.current && clearTimeout(silenceTimerRef.current);
