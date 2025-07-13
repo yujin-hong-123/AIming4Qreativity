@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/Profile.css";
 
 function Profile() {
@@ -13,6 +14,7 @@ function Profile() {
     doctor_name: "",
     doctor_email: ""
   });
+  const navigate = useNavigate();
 
   // Fetch existing user data on mount
   useEffect(() => {
@@ -56,8 +58,13 @@ function Profile() {
     }
   };
 
+  const handleClose = () => {
+    navigate(-1); // Go back to the previous page
+  };
+
   return (
     <div className="profile-form">
+      <button className="close-button" onClick={handleClose}>&times;</button>
       <h2>{form.name ? "Edit Patient Profile" : "Set Up Patient Profile"}</h2>
       <form onSubmit={handleSubmit}>
         <input

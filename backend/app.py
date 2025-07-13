@@ -21,9 +21,9 @@ def reminder():
 def calendar():
     return jsonify(message="Calendar")
 
-@app.route("/emergency")
-def emergency():
-    return jsonify(message="Emergency")
+@app.route("/log")
+def log():
+    return jsonify(message="Log")
 
 @app.route("/api/users", methods=["POST"])
 def upsert_user():
@@ -96,30 +96,39 @@ def get_user():
 @app.route("/api/reminders", methods=["POST"])
 def add_reminder():
     data = request.get_json()
+    print("Reminder POST data:", data)
+
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Assume only one user exists, get user_id
     cursor.execute("SELECT id FROM users LIMIT 1")
     user = cursor.fetchone()
 
     if not user:
+        print("No user found in DB.")
         conn.close()
         return {"message": "No user exists"}, 400
 
-    cursor.execute("""
-        INSERT INTO reminders (user_id, time, label, repeat_daily)
-        VALUES (?, ?, ?, ?)
-    """, (
-        user["id"],
-        data["time"],
-        data["label"],
-        data.get("repeat_daily", True)
-    ))
+    print("Inserting reminder for user_id:", user["id"])
 
-    conn.commit()
-    conn.close()
-    return {"message": "Reminder saved"}, 201
+    try:
+        cursor.execute("""
+            INSERT INTO reminders (user_id, time, label)
+            VALUES (?, ?, ?)
+        """, (
+            user["id"],
+            data["time"],
+            data["label"],
+        ))
+        conn.commit()
+        print("Reminder saved!")
+        return {"message": "Reminder saved"}, 201
+    except Exception as e:
+        print("DB Error:", e)
+        return {"message": "DB error occurred"}, 500
+    finally:
+        conn.close()
+
 
 @app.route("/api/reminders", methods=["GET"])
 def get_reminders():
@@ -130,6 +139,59 @@ def get_reminders():
     conn.close()
     return jsonify(reminders)
 
+@app.route("/api/events", methods=["POST"])
+def add_event():
+    data = request.get_json()
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id FROM users LIMIT 1")
+    user = cursor.fetchone()
+
+    if not user:
+        conn.close()
+        return {"message": "No user exists"}, 400
+
+    try:
+        cursor.execute("""
+            INSERT INTO events (user_id, title, date)
+            VALUES (?, ?, ?)
+        """, (
+            user["id"],
+            data["title"],
+            data["date"]
+        ))
+        conn.commit()
+        return {"message": "Event saved"}, 201
+    except Exception as e:
+        print("DB Error:", e)
+        return {"message": "Failed to save event"}, 500
+    finally:
+        conn.close()
+        
+@app.route("/api/events", methods=["GET"])
+def get_events():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT title, date FROM events")
+    rows = cursor.fetchall()
+    events = [dict(row) for row in rows]
+
+    conn.close()
+    return jsonify(events)
+
+@app.route("/api/logs", methods=["GET"])
+def get_logs():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT date, description FROM logs ORDER BY date DESC")
+    rows = cursor.fetchall()
+    logs = [dict(row) for row in rows]
+
+    conn.close()
+    return jsonify(logs)
 
 if __name__ == "__main__":
     init_db()

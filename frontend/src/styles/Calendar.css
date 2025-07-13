@@ -1,0 +1,72 @@
+.calendar-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 1rem;
+    position: relative;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    cursor: pointer;
+    color: #444;
+    z-index: 10;
+  }
+
+  /* Container for the entire calendar */
+.calendar-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 1rem;
+    position: relative;
+  }
+  
+  /* Close button styling */
+  .close-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    cursor: pointer;
+    color: #444;
+    z-index: 10;
+  }
+  
+  /* Add spacing between calendar toolbar buttons */
+  .fc .fc-toolbar-chunk button {
+    margin: 0 6px;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+  
+  /* Optional: vertically align buttons better */
+  .fc .fc-toolbar {
+    margin-bottom: 1rem;
+  }
+
+  /* Add padding above the "today" button */
+.fc-toolbar-chunk:first-child {
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Add padding below the prev/next buttons */
+  .fc-toolbar-chunk:last-child {
+    margin-top: 0.5rem;
+  }
+  
+  
+  
