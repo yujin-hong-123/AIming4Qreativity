@@ -179,8 +179,11 @@ function Start() {
   <div className="start-page">
     <div className="status">{status}</div>
     <button className="start-button" onClick={() => navigate("/home")}>
-      <img src="/AppLogo.png" alt="App Logo" className="logo" />
-    </button>
+  <div className="logo-container">
+    <img src="/AppLogo.png" alt="App Logo" className="logo" />
+    <div className="logo-text">Gran-Bot</div>
+  </div>
+</button>
     <button className="send-button" onClick={handleChatClick}>Send</button>
   </div>
 );

@@ -46,5 +46,30 @@
   max-width: 200px;
 }
 
+.logo-container {
+  position: relative;
+  display: inline-block;
+}
+
+.logo {
+  width: 300px; /* Adjust as needed */
+  height: auto;
+  display: block;
+}
+
+.logo-text {
+  position: absolute;
+  top: 47%;          /* Center vertically */
+  left: 50%;         /* Center horizontally */
+  transform: translate(-50%, -50%);  /* Shift center */
+  font-size: 40px;
+  font-weight: bold;
+  color: #f6f6f6;     /* Black text for contrast */
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  pointer-events: none;
+}
+
+
 
   
