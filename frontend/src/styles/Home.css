@@ -1,17 +1,61 @@
-.home {
-    text-align: center;
-    padding: 2rem;
-  }
+/* Home.css */
 
-.home-buttons {
+.home {
+  background-color: #fef6ef;
+  height: 100vh;
   display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1rem;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 60px;
+  font-family: 'Arial', sans-serif;
 }
 
-button {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
+.home h2 {
+  font-size: 3rem;
+  margin-bottom: 60px;
+  color: #333;
+}
+
+.home-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 350px);
+  gap: 50px;
+}
+
+/* Base button styles */
+.home-buttons button {
+  border: 2px solid #ccc;
+  border-radius: 25px;
+  padding: 50px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #ffffff;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  height: 200px;
+  width: 100%;
+}
+
+/* Four specific colors based on your image */
+.home-buttons button:nth-child(1) {
+  background-color: #ecb55c; /* pastel orange */
+}
+
+.home-buttons button:nth-child(2) {
+  background-color: #b0a7d3; /* coral pink */
+}
+
+.home-buttons button:nth-child(3) {
+  background-color: #8f95d3; /* lavender blue */
+}
+
+.home-buttons button:nth-child(4) {
+  background-color: #f1916d; /* light purple */
+}
+
+/* Hover effect */
+.home-buttons button:hover {
+  filter: brightness(1.1);
+  transform: translateY(-6px);
 }

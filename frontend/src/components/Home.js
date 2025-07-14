@@ -32,7 +32,7 @@ function Home() {
 
   return (
     <div className="home">
-      <h2>{msg || "Loading..."}</h2>
+      {/* <h2>{msg || "Loading..."}</h2> */}
       <div className="home-buttons">
         <button onClick={() => navigate("/profile")}>Profile</button>
         <button onClick={() => navigate("/reminder")}>Reminder</button>

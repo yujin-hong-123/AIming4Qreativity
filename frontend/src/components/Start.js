@@ -51,7 +51,7 @@ function Start() {
 
     detectSilence(() => {
       stopRecording();
-    }, 2000, 0.07);
+    }, 5000, 0.5);
   };
 
   const handleChatClick = () => {
@@ -176,15 +176,15 @@ function Start() {
   };
 
   return (
-    <div className="start-page">
-      <div className="status">{status}</div>
-      <button className="start-button" onClick={() => navigate("/home")}>
-        Hello
-      </button>
-      <button onClick={handleChatClick}>Chat</button>
+  <div className="start-page">
+    <div className="status">{status}</div>
+    <button className="start-button" onClick={() => navigate("/home")}>
+      <img src="/AppLogo.png" alt="App Logo" className="logo" />
+    </button>
+    <button className="send-button" onClick={handleChatClick}>Send</button>
+  </div>
+);
 
-    </div>
-  );
 }
 
 export default Start;

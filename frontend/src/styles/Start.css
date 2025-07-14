@@ -5,13 +5,21 @@
   justify-content: center;
   height: 100vh;
   position: relative;
+  background-color: #fef6ef;
+}
+
+.start-button .logo {
+  width: 550px;
+  height: auto;
 }
 
 .start-button {
-  font-size: 2rem;
-  padding: 20px 40px;
-  margin-bottom: 60px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
+
 
 .mic-button {
   position: absolute;
@@ -23,6 +31,19 @@
   padding: 20px;
   cursor: pointer;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+}
+
+.send-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #ef4e86; /* or any color you prefer */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  margin-top: 20px;
+  width: auto;
+  max-width: 200px;
 }
 
 
