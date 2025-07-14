@@ -43,7 +43,7 @@ This app was built for the Snapdragon X Elite but designed to be platform agnost
 - AnythingLLM LLM Provider: AnythingLLM NPU (For older version, this may show Qualcomm QNN)
 - AnythingLLM Chat Model: Llama 3.1 8B Chat 8K
 
-### Setup
+## Setup
 1. Install and setup [AnythingLLM](https://anythingllm.com/).
     1. Choose AnythingLLM NPU when prompted to choose an LLM provider to target the NPU
     2. Choose a model of your choice when prompted. This sample uses Llama 3.1 8B Chat with 8K context
@@ -82,7 +82,7 @@ This app was built for the Snapdragon X Elite but designed to be platform agnost
     ```
 7. Test the model server auth to verify the API key
     ```
-    python src/run-auth.py
+    python API-calls/run-auth.py
     ```
 8. Install npm dependencies
     ```
@@ -109,9 +109,12 @@ python ./run-export-chat-summary.py
 
 A window should pop up with the frontend and you should be able to use it.
 
-### Troubleshooting
-*** General crashes ***<br>
-Restart anythingLLM on your machine and clearing all chats works in most cases. This is because of resource constraints on the machine and the app itself.
+## Troubleshooting
+***General crashes***<br>
+Restart anythingLLM on your machine and clearing all chats works in most cases. This is because of resource constraints on the machine and the app itself. You need to keep AnythingLLM, backend and frontend all open. If a chat is successful, you will be able to see the transcription recorded in the anythingLLM chat window for the asssociated slug. PLease clear the workspace uploaded files from time to time since multiple conversations may clog up the pipeline overtime.
+
+***Glitchy chat window***<br>
+The application was designed to function as a completely end-to-end voice activated chat. To enable this, the chat mode starts listening immediately and waits for a pause (complete silence) for about 2 seconds. If successful, you will see a recording.wav downloaded. Only after this may you hit send. The backend takes time because of system resource limitations. You may use a smaller model but we haven't tested this out.
 
 ***AnythingLLM NPU Runtime Missing***<br>
 On a Snapdragon X Elite machine, AnythingLLM NPU should be the default LLM Provider. If you do not see it as an option in the dropdown, you downloaded the AMD64 version of AnythingLLM. Delete the app and install the ARM64 version instead.
