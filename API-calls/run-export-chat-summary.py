@@ -1,6 +1,8 @@
 import requests
 import os
 import json
+import sqlite3
+from datetime import datetime
 
 API_TOKEN = "36JCJHM-SCVMZZP-HKG7GQQ-SZWVMPR"
 
@@ -119,6 +121,28 @@ def print_resp(response):
         print(f"Error: {response.status_code}")
         print(response.text)
 
+def format_json(response):
+
+    def insert_log(json_data):
+        # Construct path relative to the current script's location
+        db_path = os.path.join(os.path.dirname(__file__), '..', 'backend', 'app.db')
+        connection = sqlite3.connect(db_path)
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            INSERT INTO logs (date, description) VALUES (?, ?)
+        """, (json_data["date"], json_data["description"]))
+
+        connection.commit()
+        connection.close()
+
+    summary_dict = {
+        "date" : datetime.now().strftime('%Y:%m:%d'),
+        "description" : response.json().get("textResponse", "No response text found.")
+    }
+
+    insert_log(json_data=summary_dict)
+
 if __name__ == "__main__":
 
     #See the avaibale workspaces
@@ -145,6 +169,8 @@ if __name__ == "__main__":
 
     response = send_chat_request(chat_url, s[:CL], "chat")
     print_resp(response)
+    # test_json = {'id': 'a362bbac-e428-4dc1-b95e-02caa8a45457', 'type': 'textResponse', 'close': True, 'error': None, 'chatId': 39, 'textResponse': "This conversation revolves around the user's interest in accessing an API through a web server. The AI has explained that it cannot launch a web server or provide direct access to APIs and provided information on how to set up and access APIs from their own system. The user is seeking assistance with this process, possibly due to confusion or lack of knowledge about the topic.", 'sources': [], 'metrics': {'prompt_tokens': 2799, 'completion_tokens': 73, 'total_tokens': 2872, 'outputTps': 1.1391476678682335, 'duration': 64.083}}
+    format_json(response)
 
 
     
