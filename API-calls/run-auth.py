@@ -1,7 +1,11 @@
 import requests
+import json
 
-API_TOKEN="36JCJHM-SCVMZZP-HKG7GQQ-SZWVMPR"
-auth_url = "http://localhost:3001/api/v1/auth"
+with open("../config.json") as config_file:
+    config = json.load(config_file)
+
+API_TOKEN = config.get("api-key", "36JCJHM-SCVMZZP-HKG7GQQ-SZWVMPR")
+auth_url = config.get("api-base-url", "http://localhost:3001/api") + "/v1/auth"
 
 def auth(url):
     

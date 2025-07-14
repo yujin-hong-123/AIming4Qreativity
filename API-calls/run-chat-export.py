@@ -1,9 +1,13 @@
 import requests
 import os
+import json
 
-API_TOKEN = "36JCJHM-SCVMZZP-HKG7GQQ-SZWVMPR"
+with open("../config.json") as config_file:
+    config = json.load(config_file)
 
-BASE_URL = 'http://localhost:3001/api'
+API_TOKEN = config.get("api-key", "")
+
+BASE_URL = config.get("api-base-url", "http://localhost:3001/api")
 EXPORT_CHAT_URL=f"{BASE_URL}/v1/system/export-chats"
 HEADERS = {'Authorization': f'Bearer {API_TOKEN}'}
 

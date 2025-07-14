@@ -1,12 +1,16 @@
 import requests
 import os
 import pyttsx3
+import json
 
-API_TOKEN = "SAC2CQC-D9R47H7-HN0FKJV-WMXSTMG"
+with open("../config.json") as config_file:
+    config = json.load(config_file)
+
+API_TOKEN = config.get("api-key", "SAC2CQC-D9R47H7-HN0FKJV-WMXSTMG")
 
 # API Endpoints
-upload_url = "http://localhost:3001/api/v1/document/upload"
-chat_url = "http://localhost:3001/api/v1/workspace/haqathon/chat"
+upload_url = config.get("api-base-url", "http://localhost:3001/api") + "/v1/document/upload"
+chat_url = config.get("api-base-url", "http://localhost:3001/api") + "/v1/workspace/haqathon/chat"
 
 file_path = os.path.join(os.path.dirname(__file__), "everything.wav")
 
