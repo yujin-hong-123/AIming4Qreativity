@@ -1,0 +1,18 @@
+{
+    "name": "AIming4Qreativity",
+    "version": "1.0.0",
+    "description": "A project to enhance creativity using AI",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "dependencies": {
+        "express": "^4.17.1",
+        "axios": "^0.21.1"
+    },
+    "api-key": "Your api key here",
+    "api-base-url": "http://localhost:3001/api",
+    "chat-slug": "haqathon",
+    "author": "Your Name",
+    "license": "MIT"
+}
