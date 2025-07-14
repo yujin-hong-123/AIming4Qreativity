@@ -1,20 +1,32 @@
-# GranBot chat app
+# Gran-Bot: AI Assistant for the Elderly
 
-A simple, NPU-accelerated chat app running locally on the [AnythingLLM](https://anythingllm.com/) model server. AnythingLLM's model server provides automatic RAG, long-term memory, and other LLM optimizations with Workspace separation.
+## 🧠 Overview
+**Gran-Bot** is a privacy-first, voice-enabled AI assistant designed to empower elderly individuals—especially those with cognitive decline or limited tech literacy—by offering intuitive, secure, and empathetic digital support.
 
-To write the code from scratch with me, check out this [build along video](https://www.youtube.com/watch?v=Cb-TvjTV4Eg) on Youtube!
 
-### Table of Contents
-[1. Purpose](#purpose)<br>
-[2. Implementation](#implementation)<br>
-[3. Setup](#setup)<br>
-[4. Usage](#usage)<br>
-[5. Troubleshooting](#troubleshooting)<br>
-[6. Contributing](#contributing)<br>
-[7. Code of Conduct](#code-of-conduct)<br>
+## 📌 Motivation
+Elderly users often face challenges with:
+- Navigating complex digital interfaces
+- Remembering tasks or important information
+- Maintaining independence while staying safe
 
-### Purpose
-This is an extensible base app for a custom local language model. [AnythingLLM](https://anythingllm.com/) includes many API endpoints, including Open AI compatibility, that you can use to expand functionality. You can access the Swagger API docs in Settings -> Tools -> Developer API -> Read the API documentation. An empty template for this app is available [here](https://github.com/thatrandomfrenchdude/simple-npu-chatbot-template) on GitHub for use during build-along workshops.
+**Gran-Bot** addresses these issues with a **fully local AI assistant**, ensuring **data privacy** and **user dignity**.
+
+
+## 🎯 Key Features
+- **Conversational Voice Interface**: Natural, hands-free interaction using Whisper + LLM.
+- **Smart Summaries for Caregivers**: Privacy-conscious logs to keep loved ones informed.
+- **Contextual Document Retrieval**: Secure access to personal documents via RAG.
+- **Real-Time Scam Detection**: Alerts users to suspicious messages or calls.
+- **Empathetic Engagement**: Personalized, emotionally intelligent conversations.
+
+
+## 🛠️ Technology Stack
+- **Whisper**: Converts speech to text for voice-based interaction.
+- **AnythingLLM**: Local LLM instance for private, intelligent responses.
+- **RAG (Retrieval-Augmented Generation)**: Context-aware document lookup.
+
+All components run **entirely offline**, ensuring **no cloud dependency** and **maximum privacy**.
 
 ### Implementation
 This app was built for the Snapdragon X Elite but designed to be platform agnostic. Performance may vary on other hardware.
@@ -36,6 +48,8 @@ This app was built for the Snapdragon X Elite but designed to be platform agnost
     1. Choose AnythingLLM NPU when prompted to choose an LLM provider to target the NPU
     2. Choose a model of your choice when prompted. This sample uses Llama 3.1 8B Chat with 8K context
 2. Create a workspace by clicking "+ New Workspace". Note down the workspace name (name it 'haqathon').
+    1. Navigate to the chat settings for the workspace and copy in the contents of system_prompt.txt into the prompt section.
+    2. Upload the files in documents folder to the workspace. 
 3. Generate an API key
     1. Click the settings button on the bottom of the left panel
     2. Open the "Tools" dropdown
@@ -86,6 +100,11 @@ python app.py
 # terminal 2 (frontend)
 cd frontend
 npm start
+```
+The summarization of chat needs to be run as a separate script. This is to prevent crashes due to limits on the anythingLLM
+```
+cd API-calls
+python ./run-export-chat-summary.py
 ```
 
 A window should pop up with the frontend and you should be able to use it.

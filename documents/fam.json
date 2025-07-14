@@ -1,0 +1,34 @@
+  [
+  {
+    "Name": "Michael Smith",
+    "Relation": "Son",
+    "Birthday": "2000-09-22",
+    "Phone": "555-4321",
+    "Email": "michael@example.com",
+    "Notes": "College student studying computer science"
+  },
+  {
+    "Name": "Emily Smith",
+    "Relation": "Daughter",
+    "Birthday": "2003-06-15",
+    "Phone": "555-6789",
+    "Email": "emily@example.com",
+    "Notes": "High school senior, plays violin"
+  },
+  {
+    "Name": "Sarah Johnson",
+    "Relation": "Caretaker",
+    "Birthday": "1985-11-02",
+    "Phone": "555-9876",
+    "Email": "sarah.caretaker@example.com",
+    "Notes": "Available weekdays 9am–5pm"
+  },
+  {
+    "Name": "Jack Smith",
+    "Relation": "Husband",
+    "Birthday": "1972-08-30",
+    "Phone": "555-2468",
+    "Email": "jack@example.com",
+    "Notes": "Enjoys painting and yoga"
+  }
+]
