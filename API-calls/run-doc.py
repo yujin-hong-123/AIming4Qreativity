@@ -1,9 +1,14 @@
 import requests
 import os
-##### TO DO ##############
-API_TOKEN = "36JCJHM-SCVMZZP-HKG7GQQ-SZWVMPR"
+import json
 
-BASE_URL = 'http://localhost:3001/api'
+#### TODO #####
+with open("../config.json") as config_file:
+    config = json.load(config_file)
+
+API_TOKEN = config.get("api-key", "")
+
+BASE_URL = config.get("api-base-url", "http://localhost:3001/api")
 HEADERS = {
     "Authorization": f"Bearer {API_TOKEN}",
     "Content-Type": "application/json",

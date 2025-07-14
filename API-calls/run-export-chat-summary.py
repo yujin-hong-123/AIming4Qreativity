@@ -3,12 +3,16 @@ import os
 import json
 import sqlite3
 from datetime import datetime
+import json
 
-API_TOKEN = "SAC2CQC-D9R47H7-HN0FKJV-WMXSTMG"
+with open("../config.json") as config_file:
+    config = json.load(config_file)
 
-BASE_URL = 'http://localhost:3001/api'
+API_TOKEN = config.get("api-key", "")
+
+BASE_URL = config.get("api-base-url", "http://localhost:3001/api")
 EXPORT_CHAT_URL=f"{BASE_URL}/v1/system/export-chats"
-chat_url = f"{BASE_URL}/v1/workspace/haqathon/chat"
+chat_url = f"{BASE_URL}/v1/workspace/{config.get('chat-slug', '')}/chat"
 HEADERS = {'Authorization': f'Bearer {API_TOKEN}'}
 
 CL = 1024
@@ -148,14 +152,15 @@ if __name__ == "__main__":
     #See the avaibale workspaces
     workspaces = list_workspaces()
     slugs = [workspace["slug"] for workspace in workspaces]
-    print(slugs)
+    chosen_slug = config.get("chat-slug", slugs[0])  # Default to the first slug if not specified
+    print(slugs, "Chosen slug:", chosen_slug)
 
     #Just take the first chat
     chats = {}
-    chats[slugs[-1]]= export_chat(slugs[-1])
-    chat_responses=chats[slugs[-1]]["history"]
+    chats[chosen_slug]= export_chat(chosen_slug)
+    chat_responses=chats[chosen_slug]["history"]
 
-    for text in chats[slugs[-1]]["history"]:
+    for text in chats[chosen_slug]["history"]:
         print(text)
     
     print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")

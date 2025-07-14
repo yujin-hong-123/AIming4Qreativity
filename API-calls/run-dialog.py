@@ -1,10 +1,14 @@
 import requests
+import json
 
-API_TOKEN = "36JCJHM-SCVMZZP-HKG7GQQ-SZWVMPR"
+with open("../config.json") as config_file:
+    config = json.load(config_file)
+
+API_TOKEN = config.get("api-key", "")
 
 # API Endpoints
-# base_url = "http://localhost:3001/api|brx-7R2MFMJ-EQ1MMT7-HNSR12Q-CPZ3WT6"
-base_url = "http://localhost:3001/api"
+# base_url = "http://localhost:3001/api"
+base_url = config.get("api-base-url", "http://localhost:3001/api")
 auth_url = f"{base_url}/v1/auth"
 chat_url = f"{base_url}/v1/workspace/haq/chat"
 

@@ -1,12 +1,16 @@
 import requests
 import os
 import pyttsx3
+import json
 
-API_TOKEN = "SAC2CQC-D9R47H7-HN0FKJV-WMXSTMG"
+with open("../config.json") as config_file:
+    config = json.load(config_file)
+
+API_TOKEN = config.get("api-key", "")
 
 # API Endpoints
 upload_url = "http://localhost:3001/api/v1/document/upload"
-chat_url = "http://localhost:3001/api/v1/workspace/haqathon/chat"
+chat_url = f"http://localhost:3001/api/v1/workspace/{config.get('chat-slug', '')}/chat"
 
 file_path = os.path.join(os.path.dirname(__file__), "cache", "recording.wav")
 
