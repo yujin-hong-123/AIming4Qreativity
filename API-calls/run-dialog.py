@@ -3,8 +3,10 @@ import requests
 API_TOKEN = "36JCJHM-SCVMZZP-HKG7GQQ-SZWVMPR"
 
 # API Endpoints
-auth_url = "http://localhost:3001/api/v1/auth"
-chat_url = "http://localhost:3001/api/v1/workspace/haqathon/chat"
+# base_url = "http://localhost:3001/api|brx-7R2MFMJ-EQ1MMT7-HNSR12Q-CPZ3WT6"
+base_url = "http://localhost:3001/api"
+auth_url = f"{base_url}/v1/auth"
+chat_url = f"{base_url}/v1/workspace/haq/chat"
 
 
 # Function to check auth
