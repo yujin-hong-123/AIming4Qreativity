@@ -4,11 +4,11 @@ import json
 import sqlite3
 from datetime import datetime
 
-API_TOKEN = "36JCJHM-SCVMZZP-HKG7GQQ-SZWVMPR"
+API_TOKEN = "SAC2CQC-D9R47H7-HN0FKJV-WMXSTMG"
 
 BASE_URL = 'http://localhost:3001/api'
 EXPORT_CHAT_URL=f"{BASE_URL}/v1/system/export-chats"
-chat_url = f"{BASE_URL}/v1/workspace/haq/chat"
+chat_url = f"{BASE_URL}/v1/workspace/haqathon/chat"
 HEADERS = {'Authorization': f'Bearer {API_TOKEN}'}
 
 CL = 1024
@@ -52,7 +52,7 @@ def get_slug(workspace_response, workspace_name):
             return workspace["slug"]
     return None
 
-def export_chat(slug, api_base_url="http://localhost:3001/api", api_key="36JCJHM-SCVMZZP-HKG7GQQ-SZWVMPR", api_session_id=None, limit=100, order_by="asc"):
+def export_chat(slug, api_base_url="http://localhost:3001/api", api_key=API_TOKEN, api_session_id=None, limit=100, order_by="asc"):
 
     url = f"{api_base_url}/v1/workspace/{slug}/chats"
     headers = {
@@ -148,14 +148,14 @@ if __name__ == "__main__":
     #See the avaibale workspaces
     workspaces = list_workspaces()
     slugs = [workspace["slug"] for workspace in workspaces]
-    # print(slugs)
+    print(slugs)
 
     #Just take the first chat
     chats = {}
-    chats[slugs[1]]= export_chat(slugs[1])
-    chat_responses=chats[slugs[1]]["history"]
+    chats[slugs[-1]]= export_chat(slugs[-1])
+    chat_responses=chats[slugs[-1]]["history"]
 
-    for text in chats[slugs[1]]["history"]:
+    for text in chats[slugs[-1]]["history"]:
         print(text)
     
     print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
