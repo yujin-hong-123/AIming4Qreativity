@@ -5,189 +5,152 @@ import "../styles/Start.css";
 
 function Start() {
   const navigate = useNavigate();
+
   const [recording, setRecording] = useState(false);
-  const [status, setStatus] = useState("Waiting for speech...");
+  const [status, setStatus] = useState("Ready");
 
   const recorderRef = useRef(null);
   const audioContextRef = useRef(null);
-  const silenceTimerRef = useRef(null);
-  const analyserRef = useRef(null);
-  const sourceRef = useRef(null);
   const streamRef = useRef(null);
-  const listeningRef = useRef(true);
 
   useEffect(() => {
-    initMicAndDetectSpeech();
+    // Prepare mic + recorder once on mount
+    initMic();
     return () => stopAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const initMicAndDetectSpeech = async () => {
+  const initMic = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
 
-      audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      audioContextRef.current =
+        new (window.AudioContext || window.webkitAudioContext)();
+
       recorderRef.current = new Recorder(audioContextRef.current);
       await recorderRef.current.init(stream);
 
-      analyserRef.current = audioContextRef.current.createAnalyser();
-      analyserRef.current.fftSize = 512;
-
-      sourceRef.current = audioContextRef.current.createMediaStreamSource(stream);
-      sourceRef.current.connect(analyserRef.current);
-
-      detectSpeech(() => {
-        startRecording();
-      }, 0.03);
+      setStatus("Mic ready");
     } catch (err) {
       console.error("Microphone access error:", err);
+      setStatus("Mic permission denied");
     }
   };
 
-  const startRecording = () => {
-    recorderRef.current.start();
-    setRecording(true);
-    setStatus("Recording...");
-
-    detectSilence(() => {
-      stopRecording();
-    }, 5000, 0.5);
-  };
-
-  const handleChatClick = () => {
-    // Make a POST request to the Flask endpoint to run the script
-    fetch("http://127.0.0.1:5000/run-audio-llm", {
-      method: "POST",
-    })
-      .then(res => res.json())
-      .then(data => {
-        console.log("Script output:", data);
-        // Navigate to the chat page after the script runs
-        navigate("/chat");
-      })
-      .catch(err => {
-        console.error("Error running the script:", err);
-        alert("There was an error triggering the chat functionality.");
-      });
+  const startRecording = async () => {
+    try {
+      // In case the context is suspended until user gesture
+      if (audioContextRef.current?.state === "suspended") {
+        await audioContextRef.current.resume();
+      }
+      await recorderRef.current.start();
+      setRecording(true);
+      setStatus("Recording… Click to stop & send");
+    } catch (err) {
+      console.error("Start recording error:", err);
+      setStatus("Failed to start recording");
+    }
   };
 
   const stopRecording = async () => {
-    const { blob } = await recorderRef.current.stop();
-  
-    // ✅ 1. Download locally
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "recording.wav";
-    a.click();
-  
-    // ✅ 2. Upload to backend
-    const formData = new FormData();
-    formData.append("audio", blob, "recording.wav");
-  
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/upload-audio", {
+      setStatus("Stopping…");
+      const { blob } = await recorderRef.current.stop();
+
+      // Optional: download locally
+      try {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "recording.wav";
+        a.click();
+        URL.revokeObjectURL(url);
+      } catch (e) {
+        // Non-fatal
+      }
+
+      // Upload to backend
+      setStatus("Uploading audio…");
+      const formData = new FormData();
+      formData.append("audio", blob, "recording.wav");
+
+      const uploadRes = await fetch("http://127.0.0.1:5000/api/upload-audio", {
         method: "POST",
         body: formData,
       });
-  
-      const result = await response.json();
-      console.log("Upload response:", result);
+
+      if (!uploadRes.ok) {
+        throw new Error(`Upload failed: ${uploadRes.status}`);
+      }
+
+      // Trigger LLM run immediately after upload, then go to chat
+      setStatus("Processing…");
+      const runRes = await fetch("http://127.0.0.1:5000/run-audio-llm", {
+        method: "POST",
+      });
+
+      if (!runRes.ok) {
+        throw new Error(`Run failed: ${runRes.status}`);
+      }
+
+      setStatus("Sent! Redirecting…");
+      navigate("/chat");
     } catch (err) {
-      console.error("Upload error:", err);
+      console.error("Stop/send error:", err);
+      alert("There was an error sending your recording.");
+      setStatus("Error while sending");
+    } finally {
+      setRecording(false);
+      // Keep mic initialized for the next recording; if you prefer to fully stop:
+      // stopAll();
     }
-  
-    setRecording(false);
-    setStatus("Finished recording");
-    stopAll();
-  
-    // ✅ 3. Restart listening
-    setTimeout(() => {
-      setStatus("Waiting for speech...");
-      listeningRef.current = true;
-      initMicAndDetectSpeech();
-    }, 1000);
   };
-  
-  
 
   const stopAll = () => {
-    silenceTimerRef.current && clearTimeout(silenceTimerRef.current);
-    if (audioContextRef.current) {
-      audioContextRef.current.close();
-      audioContextRef.current = null;
+    try {
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+      recorderRef.current = null;
+    } catch (e) {
+      // ignore
     }
-    streamRef.current?.getTracks().forEach((t) => t.stop());
   };
 
-  const detectSpeech = (onSpeech, threshold = 0.06) => {
-    const analyser = analyserRef.current;
-    const data = new Uint8Array(analyser.fftSize);
-
-    const check = () => {
-      analyser.getByteTimeDomainData(data);
-      let sumSquares = 0;
-      for (let i = 0; i < data.length; i++) {
-        const normalized = (data[i] - 128) / 128;
-        sumSquares += normalized * normalized;
-      }
-      const rms = Math.sqrt(sumSquares / data.length);
-
-      if (rms > threshold && listeningRef.current) {
-        listeningRef.current = false;
-        onSpeech();
-        return;
-      }
-      requestAnimationFrame(check);
-    };
-
-    check();
-  };
-
-  const detectSilence = (onSilence, timeout = 2000, threshold = 0.03) => {
-    const analyser = analyserRef.current;
-    const data = new Uint8Array(analyser.fftSize);
-
-    const check = () => {
-      analyser.getByteTimeDomainData(data);
-      let sumSquares = 0;
-      for (let i = 0; i < data.length; i++) {
-        const normalized = (data[i] - 128) / 128;
-        sumSquares += normalized * normalized;
-      }
-      const rms = Math.sqrt(sumSquares / data.length);
-
-      if (rms < threshold) {
-        if (!silenceTimerRef.current) {
-          silenceTimerRef.current = setTimeout(() => {
-            onSilence();
-            silenceTimerRef.current = null;
-          }, timeout);
-        }
-      } else {
-        clearTimeout(silenceTimerRef.current);
-        silenceTimerRef.current = null;
-      }
-
-      if (recording) requestAnimationFrame(check);
-    };
-
-    check();
+  const onRecordButtonClick = () => {
+    if (!recorderRef.current) {
+      // If init failed earlier (e.g., permission changed), try again
+      initMic().then(() => startRecording());
+      return;
+    }
+    if (!recording) startRecording();
+    else stopRecording();
   };
 
   return (
-  <div className="start-page">
-    <div className="status">{status}</div>
-    <button className="start-button" onClick={() => navigate("/home")}>
-  <div className="logo-container">
-    <img src="/AppLogo.png" alt="App Logo" className="logo" />
-    <div className="logo-text">Gran-Bot</div>
-  </div>
-</button>
-    <button className="send-button" onClick={handleChatClick}>Send</button>
-  </div>
-);
+    <div className="start-page">
+      <div className="status">{status}</div>
 
+      <button className="start-button" onClick={() => navigate("/home")}>
+        <div className="logo-container">
+          <img src="/AppLogo.png" alt="App Logo" className="logo" />
+          <div className="logo-text">Gran-Bot</div>
+          <div className="logo-subtext">Click here to start</div>
+        </div>
+      </button>
+
+      <button
+        className={`send-button ${recording ? "recording" : ""}`}
+        onClick={onRecordButtonClick}
+      >
+        {recording ? "Stop & Send" : "Start Recording"}
+      </button>
+    </div>
+  );
 }
 
 export default Start;

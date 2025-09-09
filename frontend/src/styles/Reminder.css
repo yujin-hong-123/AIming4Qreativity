@@ -1,44 +1,183 @@
-/* Reminder.css */
+/* Page background to match Start/Home/Profile */
 .reminder-page {
-    max-width: 500px;
-    margin: 2rem auto;
-    padding: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-  }
+  min-height: 100vh;
+  background-color: #fef6ef;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 20px 48px;
+  font-family: 'Arial', sans-serif;
+}
 
+/* Card for the form */
+.reminder-card {
+  position: relative;
+  width: 100%;
+  max-width: 820px;
+  background: #ffffff;
+  border-radius: 24px;
+  border: 2px solid #f7e2d3;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  padding: 24px 24px 28px;
+}
+
+/* Close button (consistent with Profile) */
 .close-button {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+  top: 12px;
+  right: 14px;
   background: transparent;
   border: none;
-  font-size: 1.5rem;
+  font-size: 28px;
   line-height: 1;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
   color: #444;
-  z-index: 10;
-  }
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+.close-button:hover {
+  background: rgba(0,0,0,0.06);
+  transform: translateY(-1px);
+}
 
-form input, form label, button {
-  display: block;
-  margin-bottom: 10px;
+/* Header */
+.reminder-header h2 {
+  margin: 6px 0 6px;
+  font-size: 28px;
+  color: #333;
+}
+.subtitle {
+  margin: 0 0 18px;
+  color: #666;
+  font-size: 14px;
+}
+
+/* Form layout */
+.reminder-form {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+}
+.field {
+  grid-column: span 12;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+@media (min-width: 700px) {
+  .field:nth-of-type(1) { grid-column: span 4; } /* time */
+  .field:nth-of-type(2) { grid-column: span 8; } /* label */
+}
+
+.field label {
+  font-size: 12px;
+  color: #666;
+}
+
+.field input {
   width: 100%;
-  padding: 0.5rem;
-  box-sizing: border-box;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #333;
+  background: #ffffff;
+  border: 1.5px solid #eadfda;
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-ul {
-  list-style-type: none;
+/* Focus ring uses your pink accent */
+.field input:focus {
+  border-color: #ef4e86;
+  box-shadow: 0 0 0 4px rgba(239, 78, 134, 0.12);
+}
+
+/* Actions row */
+.actions {
+  grid-column: span 12;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Reuse existing .send-button, adjust spacing/size */
+.add-button {
+  margin-top: 0;
+  padding: 12px 20px;
+}
+
+/* Saved Reminders section */
+.reminder-list-wrap {
+  width: 100%;
+  max-width: 820px;
+  margin-top: 22px;
+  background: #fffaf5;
+  border: 1px solid #f5dfd2;
+  border-radius: 18px;
+  padding: 18px 18px 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+.reminder-list-wrap h3 {
+  margin: 0 0 10px;
+  color: #333;
+  font-size: 18px;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  color: #666;
+  padding: 22px 8px 30px;
+}
+.empty-bubble {
+  display: inline-block;
+  background: #ffffff;
+  border: 1px dashed #eadfda;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  color: #8f95d3; /* one of your accents */
+  font-weight: bold;
+}
+
+/* List */
+.reminder-list {
+  list-style: none;
   padding: 0;
+  margin: 0;
+}
+.reminder-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 10px;
+  border-bottom: 1px solid #f0e3da;
+}
+.reminder-item:last-child {
+  border-bottom: none;
 }
 
-li {
-  padding: 6px 0;
-  border-bottom: 1px solid #ddd;
+/* Time badge + label */
+.time-badge {
+  display: inline-block;
+  min-width: 74px;
+  text-align: center;
+  padding: 8px 10px;
+  background: #ecb55c;          /* pastel orange */
+  color: #fff;
+  border-radius: 12px;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
-  
+.item-label {
+  color: #333;
+  font-size: 15px;
+}
+
+/* Optional subtle hover (desktop) */
+@media (hover: hover) {
+  .reminder-item:hover {
+    background: #fff;
+  }
+}

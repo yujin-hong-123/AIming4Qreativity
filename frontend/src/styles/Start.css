@@ -70,6 +70,15 @@
   pointer-events: none;
 }
 
-
-
-  
+.logo-subtext {
+  position: absolute;
+  top: 54%;                /* closer to Gran-Bot (was 60%) */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;         /* smaller than .logo-text */
+  font-weight: bold;
+  color: #ffffff;          /* white */
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  pointer-events: none;
+}

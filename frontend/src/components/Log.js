@@ -12,7 +12,7 @@ function Log() {
         const res = await fetch("http://127.0.0.1:5000/api/logs");
         if (res.ok) {
           const data = await res.json();
-          setLogs(data);
+          setLogs(Array.isArray(data) ? data : []);
         } else {
           console.error("Failed to fetch logs");
         }
@@ -20,31 +20,42 @@ function Log() {
         console.error("Error fetching logs:", error);
       }
     }
-
     fetchLogs();
   }, []);
 
-  const handleClose = () => {
-    navigate(-1); // Go back
-  };
+  const handleClose = () => navigate(-1);
 
   return (
-    <div className="log-container">
-      <button className="close-button" onClick={handleClose}>
-        &times;
-      </button>
-      <h2>Daily Log</h2>
-      <ul className="log-list">
-        {logs.length > 0 ? (
-          logs.map((log, index) => (
-            <li key={index}>
-              <strong>{log.date}</strong>: {log.description}
-            </li>
-          ))
+    <div className="log-page">
+      <div className="log-card">
+        <button className="close-button" onClick={handleClose} aria-label="Close">
+          &times;
+        </button>
+
+        <header className="log-header">
+          <h2>Daily Log</h2>
+          <p className="subtitle">Quick snapshots of each day.</p>
+        </header>
+
+        {logs.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-bubble">No logs yet</div>
+            <p>Add entries from other pages, and they’ll appear here.</p>
+          </div>
         ) : (
-          <p>No logs available.</p>
+          <ul className="log-list">
+            {logs.map((log, index) => (
+              <li className="log-item" key={index}>
+                <div className="log-left-accent" />
+                <div className="log-content">
+                  <span className="date-badge">{log.date}</span>
+                  <p className="log-text">{log.description}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
         )}
-      </ul>
+      </div>
     </div>
   );
 }
