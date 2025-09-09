@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/Reminder.css";
 
 function Reminder() {
-  const [form, setForm] = useState({ time: "", label: ""});
+  const [form, setForm] = useState({ time: "", label: "" });
   const [reminders, setReminders] = useState([]);
   const navigate = useNavigate();
 
@@ -15,11 +15,8 @@ function Reminder() {
   }, []);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value
-    }));
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -31,8 +28,7 @@ function Reminder() {
         body: JSON.stringify(form),
       });
       if (res.ok) {
-        alert("Reminder saved!");
-        setForm({ time: "", label: ""});
+        setForm({ time: "", label: "" });
         const newReminders = await fetch("http://127.0.0.1:5000/api/reminders").then(r => r.json());
         setReminders(newReminders);
       } else {
@@ -43,28 +39,72 @@ function Reminder() {
     }
   };
 
-  const handleClose = () => {
-    navigate(-1); // Go back to the previous page
-  };
+  const handleClose = () => navigate(-1);
 
   return (
     <div className="reminder-page">
-      <button className="close-button" onClick={handleClose}>&times;</button>
-      <h2>Create Reminder</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="time" name="time" value={form.time} onChange={handleChange} required />
-        <input type="text" name="label" placeholder="Reminder Label" value={form.label} onChange={handleChange} required />
-        <button type="submit">Add Reminder</button>
-      </form>
+      <div className="reminder-card">
+        <button className="close-button" onClick={handleClose} aria-label="Close">
+          &times;
+        </button>
 
-      <h3>Saved Reminders</h3>
-      <ul>
-        {reminders.map((r) => (
-          <li key={r.id}>
-            {r.time} — {r.label}
-          </li>
-        ))}
-      </ul>
+        <header className="reminder-header">
+          <h2>Create Reminder</h2>
+          <p className="subtitle">Set gentle nudges for meds, appointments, and daily routines.</p>
+        </header>
+
+        <form onSubmit={handleSubmit} className="reminder-form">
+          <div className="field">
+            <label htmlFor="time">Time</label>
+            <input
+              id="time"
+              type="time"
+              name="time"
+              value={form.time}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="label">Label</label>
+            <input
+              id="label"
+              type="text"
+              name="label"
+              placeholder="e.g., Take blood pressure meds"
+              value={form.label}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="actions">
+            {/* Reuse your pink button style */}
+            <button type="submit" className="send-button add-button">Add Reminder</button>
+          </div>
+        </form>
+      </div>
+
+      <section className="reminder-list-wrap">
+        <h3>Saved Reminders</h3>
+
+        {reminders.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-bubble">No reminders yet</div>
+            <p>Add your first reminder above.</p>
+          </div>
+        ) : (
+          <ul className="reminder-list">
+            {reminders.map((r) => (
+              <li className="reminder-item" key={r.id}>
+                <span className="time-badge">{r.time}</span>
+                <span className="item-label">{r.label}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }

@@ -1,47 +1,143 @@
-.log-container {
-    max-width: 600px;
-    margin: auto;
-    padding: 2rem 1rem;
-    position: relative;
+/* Page background to match Start/Home/Profile */
+.log-page {
+  min-height: 100vh;
+  background-color: #fef6ef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px 48px;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Card container */
+.log-card {
+  position: relative;
+  width: 100%;
+  max-width: 980px;
+  background: #ffffff;
+  border-radius: 24px;
+  border: 2px solid #f7e2d3; /* soft pastel border */
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  padding: 22px 22px 26px;
+}
+
+/* Close button (consistent across pages) */
+.close-button {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #444;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+.close-button:hover {
+  background: rgba(0,0,0,0.06);
+  transform: translateY(-1px);
+}
+
+/* Header */
+.log-header h2 {
+  margin: 6px 0 6px;
+  font-size: 28px;
+  color: #333;
+}
+.subtitle {
+  margin: 0 0 18px;
+  color: #666;
+  font-size: 14px;
+}
+
+/* List container */
+.log-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+/* Each item: soft card with a pastel accent bar */
+.log-item {
+  display: grid;
+  grid-template-columns: 8px 1fr; /* left accent bar + content */
+  align-items: stretch;
+  background: #fffaf5;
+  border: 1px solid #f5dfd2;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* Left pastel bar (cycles via nth-child below) */
+.log-left-accent {
+  width: 8px;
+}
+
+/* Rotate through your accent palette */
+.log-item:nth-child(4n+1) .log-left-accent { background: #ecb55c; } /* pastel orange */
+.log-item:nth-child(4n+2) .log-left-accent { background: #b0a7d3; } /* lilac */
+.log-item:nth-child(4n+3) .log-left-accent { background: #8f95d3; } /* lavender blue */
+.log-item:nth-child(4n+4) .log-left-accent { background: #f1916d; } /* peach */
+
+/* Content area */
+.log-content {
+  padding: 14px 16px 16px;
+}
+
+/* Date badge */
+.date-badge {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #eadfda;
+  color: #8f95d3;           /* tie into one accent */
+  font-weight: bold;
+  font-size: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  margin-bottom: 8px;
+}
+
+/* Description text */
+.log-text {
+  margin: 0;
+  color: #333;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  color: #666;
+  padding: 24px 8px 28px;
+  background: #fffaf5;
+  border: 1px dashed #f0e3da;
+  border-radius: 16px;
+}
+.empty-bubble {
+  display: inline-block;
+  background: #ffffff;
+  border: 1px dashed #eadfda;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  color: #8f95d3;
+  font-weight: bold;
+}
+
+/* Subtle hover on desktop */
+@media (hover: hover) {
+  .log-item:hover {
+    filter: brightness(1.02);
+    transform: translateY(-1px);
+    transition: transform 0.15s ease, filter 0.15s ease;
   }
-  
-  .log-list {
-    list-style: none;
-    padding: 0;
-    margin-top: 1.5rem;
-  }
-  
-  .log-list li {
-    background-color: #fefefe;
-    border: 1px solid #ddd;
-    border-left: 5px solid #4a90e2;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1.2rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s;
-  }
-  
-  .log-list li:hover {
-    transform: scale(1.01);
-  }
-  
-  .log-list strong {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .close-button {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
-    line-height: 1;
-    cursor: pointer;
-    color: #444;
-  }
-  
+}

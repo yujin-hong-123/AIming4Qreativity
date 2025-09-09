@@ -1,72 +1,204 @@
-.calendar-container {
-    max-width: 900px;
-    margin: auto;
-    padding: 1rem;
-    position: relative;
-  }
-  
-  .close-button {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
-    line-height: 1;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    cursor: pointer;
-    color: #444;
-    z-index: 10;
-  }
+/* Page background to match Start/Home/Profile */
+.calendar-page {
+  min-height: 100vh;
+  background-color: #fef6ef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px 48px;
+  font-family: 'Arial', sans-serif;
+}
 
-  /* Container for the entire calendar */
-.calendar-container {
-    max-width: 900px;
-    margin: auto;
-    padding: 1rem;
-    position: relative;
-  }
-  
-  /* Close button styling */
-  .close-button {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
-    line-height: 1;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    cursor: pointer;
-    color: #444;
-    z-index: 10;
-  }
-  
-  /* Add spacing between calendar toolbar buttons */
-  .fc .fc-toolbar-chunk button {
-    margin: 0 6px;
-    padding: 6px 12px;
-    font-size: 0.9rem;
-  }
-  
-  /* Optional: vertically align buttons better */
-  .fc .fc-toolbar {
-    margin-bottom: 1rem;
-  }
+/* Card container */
+.calendar-card {
+  position: relative;
+  width: 100%;
+  max-width: 980px;
+  background: #ffffff;
+  border-radius: 24px;
+  border: 2px solid #f7e2d3; /* soft pastel border */
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  padding: 22px 22px 26px;
+}
 
-  /* Add padding above the "today" button */
-.fc-toolbar-chunk:first-child {
-    margin-bottom: 0.5rem;
+/* Close button (consistent across pages) */
+.close-button {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  line-height: 1;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #444;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+.close-button:hover {
+  background: rgba(0,0,0,0.06);
+  transform: translateY(-1px);
+}
+
+/* Header */
+.calendar-header h2 {
+  margin: 6px 0 6px;
+  font-size: 28px;
+  color: #333;
+}
+.calendar-header .subtitle {
+  margin: 0 0 18px;
+  color: #666;
+  font-size: 14px;
+}
+
+/* Wrapper */
+.calendar-wrapper {
+  background: #fffaf5;
+  border: 1px solid #f5dfd2;
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* ------------------------- */
+/* FullCalendar theming      */
+/* ------------------------- */
+
+/* Toolbar */
+.fc .fc-toolbar {
+  margin-bottom: 10px;
+}
+.fc .fc-toolbar-title {
+  font-size: 20px;
+  color: #333;
+}
+
+/* Base button style */
+.fc .fc-toolbar-chunk button {
+  margin: 0 6px;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: filter 0.2s ease, transform 0.1s ease;
+}
+
+/* Prev/Next → pastel orange */
+.fc .fc-prev-button,
+.fc .fc-next-button {
+  background: #ecb55c;
+  color: #fff;
+}
+.fc .fc-prev-button:hover,
+.fc .fc-next-button:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+/* Today → lavender */
+.fc .fc-today-button {
+  background: #8f95d3; /* lavender blue */
+  color: #fff;
+}
+.fc .fc-today-button:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+/* Today (disabled state) — keep pastel instead of gray */
+.fc .fc-today-button:disabled {
+  background: #d0d3f0; /* lighter lavender */
+  color: #fff;
+  opacity: 1; /* override gray opacity */
+  cursor: not-allowed;
+}
+
+/* Any other buttons → pink accent */
+.fc .fc-toolbar-chunk button:not(.fc-prev-button):not(.fc-next-button):not(.fc-today-button) {
+  background: #ef4e86;
+  color: #fff;
+}
+.fc .fc-toolbar-chunk button:not(.fc-prev-button):not(.fc-next-button):not(.fc-today-button):hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+/* Grid + day cells */
+.fc .fc-daygrid,
+.fc .fc-scrollgrid {
+  border: none;
+}
+.fc .fc-scrollgrid,
+.fc .fc-scrollgrid table {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Day headers */
+.fc .fc-col-header-cell-cushion {
+  padding: 10px 0;
+  color: #666;
+  font-weight: bold;
+}
+
+/* Cell borders */
+.fc-theme-standard td,
+.fc-theme-standard th {
+  border: 1px solid #f0e3da;
+}
+
+/* Today highlight in grid */
+.fc .fc-daygrid-day.fc-day-today {
+  background: #fff;
+  box-shadow: inset 0 0 0 3px rgba(239, 78, 134, 0.18);
+}
+
+/* Weekend subtle tint */
+.fc .fc-day-sat,
+.fc .fc-day-sun {
+  background: #fffdf9;
+}
+
+/* Day numbers */
+.fc .fc-daygrid-day-top {
+  padding: 6px 8px 0 8px;
+}
+
+/* Events */
+.fc .fc-daygrid-event {
+  border: none;
+  border-radius: 12px;
+  padding: 6px 10px;
+  background: #8f95d3; /* lavender pill */
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+.fc .fc-daygrid-event .fc-event-main {
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+@media (hover: hover) {
+  .fc .fc-daygrid-event:hover {
+    filter: brightness(1.05);
+    transform: translateY(-1px);
   }
-  
-  /* Add padding below the prev/next buttons */
-  .fc-toolbar-chunk:last-child {
-    margin-top: 0.5rem;
-  }
-  
-  
-  
+}
+
+/* More link */
+.fc .fc-daygrid-more-link {
+  color: #ef4e86;
+  font-weight: bold;
+}
+
+/* Focus outlines */
+.fc a:focus {
+  box-shadow: 0 0 0 3px rgba(239, 78, 134, 0.2);
+  border-radius: 10px;
+  outline: none;
+}
+

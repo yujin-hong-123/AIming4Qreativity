@@ -13,9 +13,7 @@ function Calendar() {
     fetch("http://127.0.0.1:5000/api/events")
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data)) {
-          setEvents(data); // assuming backend returns array of { title, date }
-        }
+        if (Array.isArray(data)) setEvents(data);
       })
       .catch((err) => console.error("Failed to fetch events:", err));
   }, []);
@@ -32,11 +30,8 @@ function Calendar() {
       body: JSON.stringify(newEvent),
     })
       .then((res) => {
-        if (res.ok) {
-          setEvents((prev) => [...prev, newEvent]); // display immediately
-        } else {
-          alert("Failed to save event");
-        }
+        if (res.ok) setEvents((prev) => [...prev, newEvent]);
+        else alert("Failed to save event");
       })
       .catch((err) => {
         console.error("Failed to save event", err);
@@ -44,27 +39,37 @@ function Calendar() {
       });
   };
 
-  const handleClose = () => {
-    navigate(-1);
-  };
+  const handleClose = () => navigate(-1);
 
   return (
-    <div className="calendar-container">
-      <button className="close-button" onClick={handleClose}>&times;</button>
-      <h2>My Calendar</h2>
-      <div className="calendar-wrapper">
-        <FullCalendar
-          plugins={[dayGridPlugin, interactionPlugin]}
-          initialView="dayGridMonth"
-          events={events}
-          dateClick={handleDateClick}
-          headerToolbar={{
-            left: "prev,next",
-            center: "title",
-            right: ""
-          }}
-          height="auto"
-        />
+    <div className="calendar-page">
+      <div className="calendar-card">
+        <button className="close-button" onClick={handleClose} aria-label="Close">
+          &times;
+        </button>
+
+        <header className="calendar-header">
+          <h2>My Calendar</h2>
+          <p className="subtitle">Tap a day to add an event.</p>
+        </header>
+
+        <div className="calendar-wrapper">
+          <FullCalendar
+            plugins={[dayGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            events={events}
+            dateClick={handleDateClick}
+            height="auto"
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: ""
+            }}
+            buttonText={{
+              today: "Today"
+            }}
+          />
+        </div>
       </div>
     </div>
   );
